@@ -89,6 +89,9 @@ dependencies = [
 	{org = "ballerina", name = "jballerina.java"},
 	{org = "ballerina", name = "lang.value"}
 ]
+modules = [
+	{org = "ballerina", packageName = "io", moduleName = "io"}
+]
 
 [[package]]
 org = "ballerina"
@@ -183,6 +186,9 @@ dependencies = [
 	{org = "ballerina", name = "lang.value"},
 	{org = "ballerina", name = "observe"}
 ]
+modules = [
+	{org = "ballerina", packageName = "log", moduleName = "log"}
+]
 
 [[package]]
 org = "ballerina"
@@ -269,12 +275,35 @@ modules = [
 ]
 
 [[package]]
+org = "ballerinax"
+name = "aws.s3"
+version = "2.2.1"
+dependencies = [
+	{org = "ballerina", name = "crypto"},
+	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "jballerina.java"},
+	{org = "ballerina", name = "lang.array"},
+	{org = "ballerina", name = "log"},
+	{org = "ballerina", name = "os"},
+	{org = "ballerina", name = "regex"},
+	{org = "ballerina", name = "time"},
+	{org = "ballerina", name = "url"}
+]
+modules = [
+	{org = "ballerinax", packageName = "aws.s3", moduleName = "aws.s3"}
+]
+
+[[package]]
 org = "kasunthennakoonrascj"
 name = "todo_api"
 version = "0.1.0"
 dependencies = [
 	{org = "ballerina", name = "http"},
-	{org = "ballerinai", name = "observe"}
+	{org = "ballerina", name = "io"},
+	{org = "ballerina", name = "log"},
+	{org = "ballerinai", name = "observe"},
+	{org = "ballerinax", name = "aws.s3"}
 ]
 modules = [
 	{org = "kasunthennakoonrascj", packageName = "todo_api", moduleName = "todo_api"}

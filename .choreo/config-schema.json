@@ -1,6 +1,41 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "kasunthennakoonrascj": {
+      "type": "object",
+      "properties": {
+        "todo_api": {
+          "type": "object",
+          "properties": {
+            "accessKeyId": {
+              "type": "string",
+              "description": ""
+            },
+            "secretAccessKey": {
+              "type": "string",
+              "description": ""
+            },
+            "region": {
+              "type": "string",
+              "description": ""
+            },
+            "bucketName": {
+              "type": "string",
+              "description": ""
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "accessKeyId",
+            "secretAccessKey",
+            "region",
+            "bucketName"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "additionalProperties": false
 }
