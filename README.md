@@ -2,6 +2,10 @@
 
 This example shows how to use Choreo platform to Design, Develop, Test , Manage REST API service for managing simple Todo list 
 
+# Tryout
+
+ [Try it out](https://devportal.choreo.dev/kasunthennakoonrascj/apis/633029bcccc0ce23685066b7?fidp=google&orgUuid=b9550cf6-f7da-4a37-95aa-cdae57fcd58b&correlationId=7a038765-c276-4891-b473-327b8fbd38ec) 
+
 ## Demo
 
 https://simple-todo-using-choreo.vercel.app/
