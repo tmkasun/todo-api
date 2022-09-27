@@ -25,7 +25,7 @@
 import ballerina/http;
 import ballerina/io;
 import ballerina/log;
-import ballerinax/aws.s3;
+import ballerinax/aws.s3; // https://github.com/ballerina-platform/module-ballerinax-aws.s3
 import ballerina/uuid;
 
 configurable string accessKeyId = ""; // AKIAROLRJEOJYXSWMD4O1
@@ -56,6 +56,7 @@ type TodoRecordPayload record {|
 // Data structure of the list of Todos record
 type ToDoList record {
     TodoRecord[] list;
+    int length?;
 };
 
 s3:Client amazonS3Client = check new (amazonS3Config);
@@ -74,6 +75,7 @@ function getTodos(string user) returns ToDoList|error {
         io:ReadableCharacterChannel readableCharacterChannel = new (check io:createReadableChannel(allBytes), "UTF-8");
         json todos = check readableCharacterChannel.readJson();
         ToDoList todosList = check todos.fromJsonWithType(ToDoList);
+        todosList.length = todosList.list.length();
         return todosList;
     } else {
         return getObjectResponse;
