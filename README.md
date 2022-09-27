@@ -1,4 +1,4 @@
-# ToDo application demo
+# Todo list API
 
 This example shows how to use Choreo platform to Design, Develop, Test , Manage REST API service for managing simple Todo list 
 
@@ -18,5 +18,8 @@ Deploy the example using [Choreo](https://console.choreo.dev?utm_source=github&u
 
 ### Fork and Deploy
 
-
 Deploy it to the cloud with [Choreo](https://console.choreo.dev?utm_source=github&utm_medium=readme&utm_campaign=choreo-examples) ([Documentation](https://wso2.com/choreo/docs/)).
+
+# Demo TODO SPA app
+
+https://github.com/tmkasun/Choreo-simple-TODO
