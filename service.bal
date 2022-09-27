@@ -20,6 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// For more Choreo samples : https://github.dev/wso2-enterprise/choreo-samples/
+
 import ballerina/http;
 import ballerina/io;
 import ballerina/log;
