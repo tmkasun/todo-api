@@ -3,11 +3,12 @@ import ballerina/io;
 import ballerina/log;
 // import ballerina/lang.'string as strings;
 import ballerinax/aws.s3;
+import ballerina/uuid;
 
-configurable string accessKeyId = ""; // AKIAROLRJEOJYXSWMD4O1
-configurable string secretAccessKey = ""; // yIn4eexjit7yDS/nng3eqlbVlzM3tW0nprOLJh611
+configurable string accessKeyId = "AKIAROLRJEOJYXSWMD4O"; // AKIAROLRJEOJYXSWMD4O1
+configurable string secretAccessKey = "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"; // yIn4eexjit7yDS/nng3eqlbVlzM3tW0nprOLJh611
 configurable string region = "us-east-1"; // us-east-1
-configurable string bucketName = "choreo-todo-sample";
+configurable string bucketName = "choreo-todo-sample"; // choreo-todo-sample
 
 s3:ConnectionConfig amazonS3Config = {
     accessKeyId: accessKeyId,
@@ -17,6 +18,13 @@ s3:ConnectionConfig amazonS3Config = {
 
 type TodoRecord record {|
     string text;
+    boolean done;
+    string id;
+|};
+
+type TodoRecordPayload record {|
+    string text;
+    boolean done;
 |};
 
 type ToDoList record {
@@ -26,7 +34,7 @@ type ToDoList record {
 s3:Client amazonS3Client = check new (amazonS3Config);
 
 function getTodos(string user) returns ToDoList|error {
-    stream<byte[], io:Error?>|error getObjectResponse = amazonS3Client->getObject(bucketName, "user.json");
+    stream<byte[], io:Error?>|error getObjectResponse = amazonS3Client->getObject(bucketName, user + ".json");
     if (getObjectResponse is stream<byte[], io:Error?>) {
         byte[] allBytes = [];
         check from byte[] chunks in getObjectResponse
@@ -50,22 +58,26 @@ service / on new http:Listener(9090) {
     # + name - the input string name
     # + return - string name with hello message or error
     resource function get todos(http:Caller caller, http:Request request) returns error? {
+        string user = "anonymous";
         http:Response response = new;
-        ToDoList todos = check getTodos("");
+        ToDoList todos = check getTodos(user);
         response.statusCode = http:STATUS_OK;
         response.setPayload(todos.toJson());
         check caller->respond(response);
     }
 
-    // curl -v -X POST -H 'Content-Type: application/json' -d '{"text":"my_login"}'  http://localhost:9090/todos
-    resource function post todos(@http:Payload TodoRecord jsonMsg) returns json|error {
+    // curl -v -X POST -H 'Content-Type: application/json' -d '{"text":"my_login", "done": false}'  http://localhost:9090/todos
+    resource function post todos(@http:Payload TodoRecordPayload jsonMsg) returns json|error {
         // Send a response back to the caller.
-        ToDoList|error todos = getTodos("");
+        string user = "anonymous";
+        ToDoList|error todos = getTodos(user);
+        string todoID = uuid:createType1AsString();
+        TodoRecord newTodo = {...jsonMsg, id: todoID};
         if (todos is error) {
             ToDoList newTodoList = {
-                list: [jsonMsg]
+                list: [newTodo]
             };
-            error? createObjectResponse = amazonS3Client->createObject(bucketName, "user.json", newTodoList.toJsonString());
+            error? createObjectResponse = amazonS3Client->createObject(bucketName, user + ".json", newTodoList.toJsonString());
             if (createObjectResponse is error) {
                 log:printError("Error: " + createObjectResponse.toString());
             } else {
@@ -73,8 +85,8 @@ service / on new http:Listener(9090) {
             }
             return {success: true};
         } else {
-            todos.list.push(jsonMsg);
-            error? createObjectResponse = amazonS3Client->createObject(bucketName, "user.json", todos.toJsonString());
+            todos.list.push(newTodo);
+            error? createObjectResponse = amazonS3Client->createObject(bucketName, user + ".json", todos.toJsonString());
             if (createObjectResponse is error) {
                 log:printError("Error: " + createObjectResponse.toString());
             } else {
