@@ -25,13 +25,7 @@
               "description": ""
             }
           },
-          "additionalProperties": false,
-          "required": [
-            "accessKeyId",
-            "secretAccessKey",
-            "region",
-            "bucketName"
-          ]
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
