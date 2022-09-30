@@ -27,7 +27,7 @@ import ballerina/io;
 import ballerina/log;
 import ballerinax/aws.s3; // https://github.com/ballerina-platform/module-ballerinax-aws.s3
 import ballerina/uuid;
-import ballerina/jwt;
+// import ballerina/jwt;
 
 configurable string accessKeyId = ""; // AKIAROLRJEOJYXSWMD4O1
 configurable string secretAccessKey = ""; // yIn4eexjit7yDS/nng3eqlbVlzM3tW0nprOLJh611
