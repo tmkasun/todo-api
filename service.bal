@@ -94,7 +94,10 @@ service / on new http:Listener(9090) {
         // @http:Header {name: "x-authorization"} string? headerValue
         // string filteredHeader = <string>headerValue;
         // string[] names = check request.getHeaderNames();
-        // log:printInfo("**************");
+        log:printInfo("###########");
+        if headerValue != () {
+            log:printInfo(headerValue);
+        }
 
         // foreach string i in names {
         //     log:printInfo(i);
