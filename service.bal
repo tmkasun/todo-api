@@ -27,6 +27,7 @@ import ballerina/io;
 import ballerina/log;
 import ballerinax/aws.s3; // https://github.com/ballerina-platform/module-ballerinax-aws.s3
 import ballerina/uuid;
+import ballerina/jwt;
 
 configurable string accessKeyId = ""; // AKIAROLRJEOJYXSWMD4O1
 configurable string secretAccessKey = ""; // yIn4eexjit7yDS/nng3eqlbVlzM3tW0nprOLJh611
@@ -90,7 +91,20 @@ service / on new http:Listener(9090) {
     # For Developer testing:  curl -v  http://localhost:9090/todos
     # + return - List of TODO records
     resource function get todos(http:Caller caller, http:Request request) returns error? {
+        // @http:Header {name: "x-authorization"} string? headerValue
+        // string filteredHeader = <string>headerValue;
+        string a = check request.getHeader("x-jwt-assertion");
+        log:printInfo(a);
+
+        [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(a);
+        log:printInfo(payload.toString());
+
         string user = "anonymous";
+        // TODO: When reading JWT , We don't log user sensitive info
+        // decode JWT
+        // do signture validation
+        // claim validation not required due to internal call
+        // x-jwt-assertion
         http:Response response = new;
         ToDoList todos = check getTodos(user);
         response.statusCode = http:STATUS_OK;
