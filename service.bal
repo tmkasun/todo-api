@@ -93,12 +93,18 @@ service / on new http:Listener(9090) {
     resource function get todos(http:Caller caller, http:Request request) returns error? {
         // @http:Header {name: "x-authorization"} string? headerValue
         // string filteredHeader = <string>headerValue;
-        string a = check request.getHeader("x-jwt-assertion");
+        string[] names = check request.getHeaderNames();
         log:printInfo("**************");
-        log:printInfo(a);
 
-        [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(a);
-        log:printInfo(payload.toString());
+        foreach string i in names {
+            log:printInfo(i);
+            
+        }
+        // string a = check request.getHeader("x-jwt-assertion");
+        // log:printInfo(a);
+
+        // [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(a);
+        // log:printInfo(payload.toString());
 
         string user = "anonymous";
         // TODO: When reading JWT , We don't log user sensitive info
