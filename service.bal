@@ -90,16 +90,16 @@ service / on new http:Listener(9090) {
     # A resource for retriving the list of todos
     # For Developer testing:  curl -v  http://localhost:9090/todos
     # + return - List of TODO records
-    resource function get todos(http:Caller caller, http:Request request) returns error? {
+    resource function get todos(@http:Header {name: "x-jwt-assertion"} string? headerValue) returns http:Response|error? {
         // @http:Header {name: "x-authorization"} string? headerValue
         // string filteredHeader = <string>headerValue;
-        string[] names = check request.getHeaderNames();
-        log:printInfo("**************");
+        // string[] names = check request.getHeaderNames();
+        // log:printInfo("**************");
 
-        foreach string i in names {
-            log:printInfo(i);
+        // foreach string i in names {
+        //     log:printInfo(i);
             
-        }
+        // }
         // string a = check request.getHeader("x-jwt-assertion");
         // log:printInfo(a);
 
@@ -116,7 +116,7 @@ service / on new http:Listener(9090) {
         ToDoList todos = check getTodos(user);
         response.statusCode = http:STATUS_OK;
         response.setPayload(todos.toJson());
-        check caller->respond(response);
+        return response;
     }
 
     # A resource for creating a new TODO item
