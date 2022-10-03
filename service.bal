@@ -79,7 +79,7 @@ function getTodos(string user) returns ToDoList|error {
         todosList.length = todosList.list.length();
         return todosList;
     } else {
-        return getObjectResponse;
+        return [].fromJsonWithType(ToDoList);
     }
 }
 
