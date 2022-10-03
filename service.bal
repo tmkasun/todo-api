@@ -87,21 +87,38 @@ function getTodos(string user) returns ToDoList|error {
 # bound to port `9090`.
 service / on new http:Listener(9090) {
 
-    resource function get todos(@http:Header {name: "x-jwt-assertion"} string? headerValue) returns http:Response|error? {
+    resource function get todos(http:Caller caller, http:Request request) returns error? {
         // @http:Header {name: "x-authorization"} string? headerValue
         // string filteredHeader = <string>headerValue;
-        // string[] names = check request.getHeaderNames();
-        log:printInfo("###########");
-        if headerValue != () {
-            log:printInfo(headerValue);
+        string[] names = check request.getHeaderNames();
+        log:printInfo("########### Start");
+        // if headerValue != () {
+        //     log:printInfo("$$$$$ found x-jwt-assertion ");
+
+        //     log:printInfo(headerValue);
+        // } else {
+        //     log:printInfo("***** No x-jwt-assertion ");
+        // }
+
+        foreach string i in names {
+            log:printInfo(i);
+        }
+        string|error jwtHeader = request.getHeader("x-jwt-assertion");
+
+        if jwtHeader is string {
+            [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(jwtHeader);
+            string? signingAlgorithm = header["alg"];
+            int? exp = payload["exp"];
+            string? issuer = payload["iss"];
+            string? subject = payload["sub"];
+            log:printInfo(payload.toJsonString());
+
+        } else {
+        log:printInfo("@@@@@@ Error readingn JWT header");
+            
         }
 
-        // foreach string i in names {
-        //     log:printInfo(i);
-            
-        // }
-        // string a = check request.getHeader("x-jwt-assertion");
-        // log:printInfo(a);
+        // log:printInfo(payload);
 
         // [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(a);
         // log:printInfo(payload.toString());
@@ -116,7 +133,8 @@ service / on new http:Listener(9090) {
         ToDoList todos = check getTodos(user);
         response.statusCode = http:STATUS_OK;
         response.setPayload(todos.toJson());
-        return response;
+        log:printInfo("***** END of Request ");
+        check caller->respond(response);
     }
 
     # A resource for creating a new TODO item
