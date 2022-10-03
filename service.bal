@@ -111,11 +111,15 @@ service / on new http:Listener(9090) {
             int? exp = payload["exp"];
             string? issuer = payload["iss"];
             string? subject = payload["sub"];
+            foreach string item in payload.keys() {
+                log:printInfo(item);
+
+            }
             log:printInfo(payload.toJsonString());
 
         } else {
-        log:printInfo("@@@@@@ Error readingn JWT header");
-            
+            log:printInfo("@@@@@@ Error readingn JWT header");
+
         }
 
         // log:printInfo(payload);
