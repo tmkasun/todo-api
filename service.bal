@@ -91,7 +91,7 @@ service / on new http:Listener(9090) {
         // @http:Header {name: "x-authorization"} string? headerValue
         // string filteredHeader = <string>headerValue;
         string[] names = check request.getHeaderNames();
-        log:printInfo("########### Start");
+        log:printInfo("2########### Start");
         // if headerValue != () {
         //     log:printInfo("$$$$$ found x-jwt-assertion ");
 
