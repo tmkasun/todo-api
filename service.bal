@@ -115,9 +115,6 @@ service / on new http:Listener(9090) {
         return response;
     }
 
-    # A resource for creating a new TODO item
-    # For Developer testing:  curl -v -X POST -H 'Content-Type: application/json' -d '{"text":"Buy eggs", "done": false}'  http://localhost:9090/todos
-    # + return - Newly created TODO record
     resource function post todos(@http:Payload TodoRecordPayload jsonMsg, http:Request request) returns http:Response|error {
         // Send a response back to the caller.
         string jwtHeader = check request.getHeader("x-jwt-assertion");
@@ -157,9 +154,6 @@ service / on new http:Listener(9090) {
         return response;
     }
 
-    # A resource for updating an exsisting TODO item
-    # For Developer testing:  curl -v -X PUT -H 'Content-Type: application/json' -d '{"text":"my_login", "done": true, "id":"01ed3dfd-a275-1c20-b61a-82c8be2ddbf9"}'  http://localhost:9090/todos/01ed3dfd-a275-1c20-b61a-82c8be2ddbf9/
-    # + return - Updated TODO record
     resource function put todos/[string todoID](@http:Payload TodoRecord putPayload, http:Request request) returns json|error|http:Response {
         if (todoID != putPayload.id) {
             return error("ID mismatch in path (" + todoID + ") and ID in payload (" + putPayload.id + ") !");
@@ -200,9 +194,6 @@ service / on new http:Listener(9090) {
         return response;
     }
 
-    # A resource for deleting an exsisting TODO item
-    # For Developer testing:  curl -v -X DELETE  http://localhost:9090/todos/01ed3dfd-a275-1c20-b61a-82c8be2ddbf9
-    # + return - Delete operation status
     resource function delete todos/[string todoID](http:Request request) returns error|http:Response {
         string jwtHeader = check request.getHeader("x-jwt-assertion");
         string user = check getUserID(jwtHeader);
