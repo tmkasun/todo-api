@@ -87,7 +87,7 @@ function getTodos(string user) returns ToDoList|error {
 # bound to port `9090`.
 service / on new http:Listener(9090) {
 
-    resource function get todos(http:Caller caller, http:Request request) returns error? {
+    resource function get todos(http:Request request) returns error|http:Response {
         // @http:Header {name: "x-authorization"} string? headerValue
         // string filteredHeader = <string>headerValue;
         string[] names = check request.getHeaderNames();
@@ -134,7 +134,7 @@ service / on new http:Listener(9090) {
         response.statusCode = http:STATUS_OK;
         response.setPayload(todos.toJson());
         log:printInfo("***** END of Request ");
-        check caller->respond(response);
+        return response;
     }
 
     # A resource for creating a new TODO item
