@@ -62,6 +62,9 @@ type ToDoList record {
 
 s3:Client amazonS3Client = check new (amazonS3Config);
 
+# A utility funnction to get the list of todos by the username
+# + user - Username
+# + return - List of TODO records of the given user
 function getTodos(string user) returns ToDoList|error {
     stream<byte[], io:Error?>|error getObjectResponse = amazonS3Client->getObject(bucketName, user + ".json");
     if (getObjectResponse is stream<byte[], io:Error?>) {
@@ -84,9 +87,6 @@ function getTodos(string user) returns ToDoList|error {
 # bound to port `9090`.
 service / on new http:Listener(9090) {
 
-    # A resource for retriving the list of todos
-    # For Developer testing:  curl -v  http://localhost:9090/todos
-    # + return - List of TODO records
     resource function get todos(@http:Header {name: "x-jwt-assertion"} string? headerValue) returns http:Response|error? {
         // @http:Header {name: "x-authorization"} string? headerValue
         // string filteredHeader = <string>headerValue;
