@@ -31,8 +31,8 @@ import ballerina/uuid;
 
 configurable string accessKeyId = ""; // AKIAROLRJEOJYXSWMD4O1
 configurable string secretAccessKey = ""; // yIn4eexjit7yDS/nng3eqlbVlzM3tW0nprOLJh611
-configurable string region = ""; // us-east-1
-configurable string bucketName = ""; // choreo-todo-sample
+configurable string region = "us-east-1"; // us-east-1
+configurable string bucketName = "choreo-todo-sample"; // choreo-todo-sample
 
 s3:ConnectionConfig amazonS3Config = {
     accessKeyId: accessKeyId,
@@ -62,9 +62,6 @@ type ToDoList record {
 
 s3:Client amazonS3Client = check new (amazonS3Config);
 
-# A utility funnction to get the list of todos by the username
-# + user - Username
-# + return - List of TODO records of the given user
 function getTodos(string user) returns ToDoList|error {
     stream<byte[], io:Error?>|error getObjectResponse = amazonS3Client->getObject(bucketName, user + ".json");
     if (getObjectResponse is stream<byte[], io:Error?>) {
