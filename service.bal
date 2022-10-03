@@ -83,51 +83,25 @@ function getTodos(string user) returns ToDoList|error {
     }
 }
 
+function getUserID(string jwtHeader) returns string|error {
+    string user = "anonymous";
+    [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(jwtHeader);
+    string? subject = payload["sub"];
+
+    if subject != () {
+        user = subject;
+    }
+    return user;
+}
+
 # A service representing a network-accessible API
 # bound to port `9090`.
 service / on new http:Listener(9090) {
 
     resource function get todos(http:Request request) returns error|http:Response {
-        // @http:Header {name: "x-authorization"} string? headerValue
-        // string filteredHeader = <string>headerValue;
-        string[] names = check request.getHeaderNames();
-        log:printInfo("2########### Start");
-        // if headerValue != () {
-        //     log:printInfo("$$$$$ found x-jwt-assertion ");
 
-        //     log:printInfo(headerValue);
-        // } else {
-        //     log:printInfo("***** No x-jwt-assertion ");
-        // }
-
-        foreach string i in names {
-            log:printInfo(i);
-        }
-        string|error jwtHeader = request.getHeader("x-jwt-assertion");
-
-        if jwtHeader is string {
-            [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(jwtHeader);
-            string? signingAlgorithm = header["alg"];
-            int? exp = payload["exp"];
-            string? issuer = payload["iss"];
-            string? subject = payload["sub"];
-            foreach string item in payload.keys() {
-                log:printInfo(item);
-
-            }
-            log:printInfo(payload.toJsonString());
-
-        } else {
-            log:printInfo("@@@@@@ Error readingn JWT header");
-
-        }
-
-        // log:printInfo(payload);
-
-        // [jwt:Header, jwt:Payload] [header, payload] = check jwt:decode(a);
-        // log:printInfo(payload.toString());
-
-        string user = "anonymous";
+        string jwtHeader = check request.getHeader("x-jwt-assertion");
+        string user = check getUserID(jwtHeader);
         // TODO: When reading JWT , We don't log user sensitive info
         // decode JWT
         // do signture validation
@@ -144,9 +118,10 @@ service / on new http:Listener(9090) {
     # A resource for creating a new TODO item
     # For Developer testing:  curl -v -X POST -H 'Content-Type: application/json' -d '{"text":"Buy eggs", "done": false}'  http://localhost:9090/todos
     # + return - Newly created TODO record
-    resource function post todos(@http:Payload TodoRecordPayload jsonMsg) returns http:Response|error {
+    resource function post todos(@http:Payload TodoRecordPayload jsonMsg, http:Request request) returns http:Response|error {
         // Send a response back to the caller.
-        string user = "anonymous";
+        string jwtHeader = check request.getHeader("x-jwt-assertion");
+        string user = check getUserID(jwtHeader);
         ToDoList|error todos = getTodos(user);
         http:Response response = new;
 
@@ -185,11 +160,12 @@ service / on new http:Listener(9090) {
     # A resource for updating an exsisting TODO item
     # For Developer testing:  curl -v -X PUT -H 'Content-Type: application/json' -d '{"text":"my_login", "done": true, "id":"01ed3dfd-a275-1c20-b61a-82c8be2ddbf9"}'  http://localhost:9090/todos/01ed3dfd-a275-1c20-b61a-82c8be2ddbf9/
     # + return - Updated TODO record
-    resource function put todos/[string todoID](@http:Payload TodoRecord putPayload) returns json|error|http:Response {
+    resource function put todos/[string todoID](@http:Payload TodoRecord putPayload, http:Request request) returns json|error|http:Response {
         if (todoID != putPayload.id) {
             return error("ID mismatch in path (" + todoID + ") and ID in payload (" + putPayload.id + ") !");
         }
-        string user = "anonymous";
+        string jwtHeader = check request.getHeader("x-jwt-assertion");
+        string user = check getUserID(jwtHeader);
         http:Response response = new;
         ToDoList todos = check getTodos(user);
         ToDoList updatedList = todos.clone();
@@ -227,8 +203,9 @@ service / on new http:Listener(9090) {
     # A resource for deleting an exsisting TODO item
     # For Developer testing:  curl -v -X DELETE  http://localhost:9090/todos/01ed3dfd-a275-1c20-b61a-82c8be2ddbf9
     # + return - Delete operation status
-    resource function delete todos/[string todoID]() returns error|http:Response {
-        string user = "anonymous";
+    resource function delete todos/[string todoID](http:Request request) returns error|http:Response {
+        string jwtHeader = check request.getHeader("x-jwt-assertion");
+        string user = check getUserID(jwtHeader);
         http:Response response = new;
         boolean todoIdFound = false;
         ToDoList todos = check getTodos(user);
